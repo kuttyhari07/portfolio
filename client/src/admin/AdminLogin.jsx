@@ -4,24 +4,44 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 
-const API_URL =
+const RAW_API_URL =
   import.meta.env.VITE_API_URL || 'https://portfolio-backend-fbde.onrender.com/api';
 
+const API_URL = RAW_API_URL.endsWith('/api')
+  ? RAW_API_URL
+  : `${RAW_API_URL.replace(/\/$/, '')}/api`;
+
 const AdminLogin = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('admin@hariharan.com');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!email.trim() || !password.trim()) {
+      toast.error('Email and password required');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      const res = await axios.post(`${API_URL}/auth/login`, {
-        email,
-        password,
-      });
+      console.log('Login API:', `${API_URL}/auth/login`);
+
+      const res = await axios.post(
+        `${API_URL}/auth/login`,
+        {
+          email: email.trim(),
+          password: password.trim(),
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       localStorage.setItem('adminToken', res.data.token);
       localStorage.setItem('adminInfo', JSON.stringify(res.data));
@@ -37,20 +57,25 @@ const AdminLogin = () => {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'var(--bg-primary)',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
-      <div style={{
-        position: 'absolute',
-        inset: 0,
-        background: 'radial-gradient(circle at 20% 50%, rgba(108, 99, 255, 0.15), transparent 50%), radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.15), transparent 50%)',
-      }} />
+    <div
+      style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'var(--bg-primary)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background:
+            'radial-gradient(circle at 20% 50%, rgba(108, 99, 255, 0.15), transparent 50%), radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.15), transparent 50%)',
+        }}
+      />
 
       <motion.div
         initial={{ scale: 0.9, opacity: 0, y: 50 }}
@@ -63,21 +88,23 @@ const AdminLogin = () => {
           margin: '1rem',
           padding: '2.5rem',
           position: 'relative',
-          zIndex: 2
+          zIndex: 2,
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-          <div style={{
-            width: '70px',
-            height: '70px',
-            background: 'var(--gradient-1)',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '0 auto 1rem',
-            fontSize: '2rem'
-          }}>
+          <div
+            style={{
+              width: '70px',
+              height: '70px',
+              background: 'var(--gradient-1)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1rem',
+              fontSize: '2rem',
+            }}
+          >
             👨‍💻
           </div>
 
@@ -108,7 +135,7 @@ const AdminLogin = () => {
                 border: '1px solid var(--border)',
                 borderRadius: '0.75rem',
                 color: 'white',
-                fontSize: '1rem'
+                fontSize: '1rem',
               }}
             />
           </div>
@@ -121,7 +148,7 @@ const AdminLogin = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder="Admin@123456"
               required
               style={{
                 width: '100%',
@@ -130,7 +157,7 @@ const AdminLogin = () => {
                 border: '1px solid var(--border)',
                 borderRadius: '0.75rem',
                 color: 'white',
-                fontSize: '1rem'
+                fontSize: '1rem',
               }}
             />
           </div>
