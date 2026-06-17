@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
-
+import API from '../services/api';
 const ManageCertificates = () => {
   const [certificates, setCertificates] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,9 +23,7 @@ const ManageCertificates = () => {
   const fetchCertificates = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await axios.get('/api/certificates', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await API.get('/certificates');
       setCertificates(res.data);
     } catch (error) {
       toast.error('Failed to fetch certificates');
@@ -46,11 +43,8 @@ const ManageCertificates = () => {
 
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await axios.post('/api/upload', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
+      const res = await API.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
       setFormData(prev => ({ ...prev, image: res.data.url }));
       toast.success('Image uploaded successfully');
@@ -70,14 +64,10 @@ const ManageCertificates = () => {
     try {
       const token = localStorage.getItem('adminToken');
       if (editingCert) {
-        await axios.put(`/api/certificates/${editingCert._id}`, formData, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await API.put(`/certificates/${editingCert._id}`, formData);
         toast.success('Certificate updated successfully');
       } else {
-        await axios.post('/api/certificates', formData, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await API.post('/certificates', formData);
         toast.success('Certificate added successfully');
       }
       fetchCertificates();
@@ -91,9 +81,7 @@ const ManageCertificates = () => {
     if (window.confirm('Are you sure you want to delete this certificate?')) {
       try {
         const token = localStorage.getItem('adminToken');
-        await axios.delete(`/api/certificates/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await API.delete(`/certificates/${id}`);
         toast.success('Certificate deleted');
         fetchCertificates();
       } catch (error) {

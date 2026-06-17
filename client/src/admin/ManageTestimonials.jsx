@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
-
+import API from '../services/api';
 const ManageTestimonials = () => {
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,9 +13,7 @@ const ManageTestimonials = () => {
   const fetchTestimonials = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await axios.get('/api/testimonials', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await API.get('/testimonials');
       setTestimonials(res.data);
     } catch (error) {
       toast.error('Failed to fetch testimonials');
@@ -28,11 +25,7 @@ const ManageTestimonials = () => {
   const updateStatus = async (id, status) => {
     try {
       const token = localStorage.getItem('adminToken');
-      await axios.put(
-        `/api/testimonials/${id}/status`,
-        { status },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await API.put(`/testimonials/${id}/status`, { status });
       toast.success(`Review ${status}`);
       fetchTestimonials();
     } catch (error) {
@@ -44,9 +37,7 @@ const ManageTestimonials = () => {
     if (window.confirm('Delete this review?')) {
       try {
         const token = localStorage.getItem('adminToken');
-        await axios.delete(`/api/testimonials/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await API.delete(`/testimonials/${id}`);
         toast.success('Review deleted');
         fetchTestimonials();
       } catch (error) {

@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
-
-const API_URL = 'http://localhost:5000/api';
-
+import API from '../services/api';
 const UpdateContent = () => {
   const [activeTab, setActiveTab] = useState('home');
   const [loading, setLoading] = useState(true);
@@ -53,8 +50,8 @@ const UpdateContent = () => {
       setLoading(true);
 
       const [homeRes, aboutRes] = await Promise.all([
-        axios.get(`${API_URL}/home`, { headers: getHeaders() }),
-        axios.get(`${API_URL}/about`, { headers: getHeaders() }),
+        API.get('/home'),
+        API.get('/about'),
       ]);
 
       setHomeData(homeRes.data);
@@ -90,11 +87,8 @@ const UpdateContent = () => {
     formData.append('folder', 'profile');
 
     try {
-      const res = await axios.post(`${API_URL}/upload`, formData, {
-        headers: {
-          ...getHeaders(),
-          'Content-Type': 'multipart/form-data',
-        },
+      const res = await API.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       if (res.data.success) {
@@ -132,11 +126,8 @@ const UpdateContent = () => {
     formData.append('folder', 'resume');
 
     try {
-      const res = await axios.post(`${API_URL}/upload`, formData, {
-        headers: {
-          ...getHeaders(),
-          'Content-Type': 'multipart/form-data',
-        },
+      const res = await API.post('/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       if (res.data.success) {
@@ -155,9 +146,7 @@ const UpdateContent = () => {
 
   const handleHomeUpdate = async () => {
     try {
-      await axios.put(`${API_URL}/home`, homeData, {
-        headers: getHeaders(),
-      });
+      await API.put('/home', homeData);
 
       toast.success('Home content updated successfully');
     } catch (error) {
@@ -168,9 +157,7 @@ const UpdateContent = () => {
 
   const handleAboutUpdate = async () => {
     try {
-      await axios.put(`${API_URL}/about`, aboutData, {
-        headers: getHeaders(),
-      });
+      await API.put('/about', aboutData);
 
       toast.success('About content updated successfully');
     } catch (error) {

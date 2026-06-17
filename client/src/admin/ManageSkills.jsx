@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
-
+import API from '../services/api';
 // Professional SVG Icons
 const SkillIcons = {
   // Frontend
@@ -425,9 +424,7 @@ const ManageSkills = () => {
   const fetchSkills = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await axios.get('/api/skills', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await API.get('/skills');
       setSkills(res.data);
     } catch (error) {
       toast.error('Failed to fetch skills');
@@ -441,14 +438,10 @@ const ManageSkills = () => {
     try {
       const token = localStorage.getItem('adminToken');
       if (editingSkill) {
-        await axios.put(`/api/skills/${editingSkill._id}`, formData, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await API.put(`/skills/${editingSkill._id}`, formData);
         toast.success('Skill updated successfully');
       } else {
-        await axios.post('/api/skills', formData, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await API.post('/skills', formData);
         toast.success('Skill added successfully');
       }
       fetchSkills();
@@ -462,9 +455,7 @@ const ManageSkills = () => {
     if (window.confirm('Are you sure you want to delete this skill?')) {
       try {
         const token = localStorage.getItem('adminToken');
-        await axios.delete(`/api/skills/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await API.delete(`/skills/${id}`);
         toast.success('Skill deleted');
         fetchSkills();
       } catch (error) {

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
-
+import API from '../services/api';
 const ManageSocialLinks = () => {
   const [socialLinks, setSocialLinks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,9 +26,7 @@ const ManageSocialLinks = () => {
   const fetchSocialLinks = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await axios.get('/api/social', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await API.get('/social');
       setSocialLinks(res.data);
     } catch (error) {
       toast.error('Failed to fetch social links');
@@ -46,9 +43,7 @@ const ManageSocialLinks = () => {
 
     try {
       const token = localStorage.getItem('adminToken');
-      await axios.post('/api/social', newLink, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await API.post('/social', newLink);
       toast.success('Social link added successfully');
       setNewLink({ platform: '', url: '', icon: '', order: 0 });
       fetchSocialLinks();
@@ -61,9 +56,7 @@ const ManageSocialLinks = () => {
     if (!editingLink) return;
     try {
       const token = localStorage.getItem('adminToken');
-      await axios.put(`/api/social/${editingLink.platform}`, editingLink, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await API.put(`/social/${editingLink.platform}`, editingLink);
       toast.success('Social link updated successfully');
       setEditingLink(null);
       fetchSocialLinks();
@@ -76,9 +69,7 @@ const ManageSocialLinks = () => {
     if (window.confirm(`Are you sure you want to delete ${platform}?`)) {
       try {
         const token = localStorage.getItem('adminToken');
-        await axios.delete(`/api/social/${platform}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await API.delete(`/social/${platform}`);
         toast.success('Social link deleted');
         fetchSocialLinks();
       } catch (error) {

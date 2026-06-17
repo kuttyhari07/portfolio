@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const API_URL = 'http://localhost:5000/api';
-
+import API from '../services/api';
 const ManageProjects = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,9 +33,7 @@ const ManageProjects = () => {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`${API_URL}/projects`, {
-        headers: getHeaders(),
-      });
+      const res = await API.get('/projects');
       setProjects(res.data || []);
     } catch (error) {
       console.error('Fetch projects error:', error.response?.data || error.message);
@@ -71,11 +66,8 @@ const ManageProjects = () => {
     uploadFormData.append('folder', 'projects');
 
     try {
-      const res = await axios.post(`${API_URL}/upload`, uploadFormData, {
-        headers: {
-          ...getHeaders(),
-          'Content-Type': 'multipart/form-data',
-        },
+      const res = await API.post('/upload', uploadFormData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       if (res.data.success) {
@@ -100,14 +92,10 @@ const ManageProjects = () => {
 
     try {
       if (editingProject) {
-        await axios.put(`${API_URL}/projects/${editingProject._id}`, formData, {
-          headers: getHeaders(),
-        });
+        await API.put(`/projects/${editingProject._id}`, formData);
         toast.success('Project updated successfully');
       } else {
-        await axios.post(`${API_URL}/projects`, formData, {
-          headers: getHeaders(),
-        });
+        await API.post('/projects', formData);
         toast.success('Project created successfully');
       }
 
@@ -123,9 +111,7 @@ const ManageProjects = () => {
     if (!window.confirm('Are you sure you want to delete this project?')) return;
 
     try {
-      await axios.delete(`${API_URL}/projects/${id}`, {
-        headers: getHeaders(),
-      });
+      await API.delete(`/projects/${id}`);
 
       toast.success('Project deleted');
       fetchProjects();

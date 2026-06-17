@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
-
+import API from '../services/api';
 const ManageMessages = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,9 +14,7 @@ const ManageMessages = () => {
   const fetchMessages = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await axios.get('/api/contact', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await API.get('/contact');
       setMessages(res.data);
     } catch (error) {
       toast.error('Failed to fetch messages');
@@ -29,9 +26,7 @@ const ManageMessages = () => {
   const markAsRead = async (id) => {
     try {
       const token = localStorage.getItem('adminToken');
-      await axios.put(`/api/contact/${id}/read`, {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await API.put(`/contact/${id}/read`, {});
       toast.success('Marked as read');
       fetchMessages();
     } catch (error) {
@@ -43,9 +38,7 @@ const ManageMessages = () => {
     if (window.confirm('Delete this message?')) {
       try {
         const token = localStorage.getItem('adminToken');
-        await axios.delete(`/api/contact/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        await API.delete(`/contact/${id}`);
         toast.success('Message deleted');
         fetchMessages();
         setSelectedMessage(null);
