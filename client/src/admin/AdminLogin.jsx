@@ -4,6 +4,9 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 
+const API_URL =
+  import.meta.env.VITE_API_URL || 'https://portfolio-backend-fbde.onrender.com/api';
+
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,13 +16,20 @@ const AdminLogin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
-      const res = await axios.post('/api/auth/login', { email, password });
+      const res = await axios.post(`${API_URL}/auth/login`, {
+        email,
+        password,
+      });
+
       localStorage.setItem('adminToken', res.data.token);
       localStorage.setItem('adminInfo', JSON.stringify(res.data));
+
       toast.success('Login successful!');
       navigate('/admin/dashboard');
     } catch (error) {
+      console.error('Login error:', error.response?.data || error.message);
       toast.error(error.response?.data?.message || 'Login failed');
     } finally {
       setLoading(false);
@@ -36,13 +46,12 @@ const AdminLogin = () => {
       position: 'relative',
       overflow: 'hidden'
     }}>
-      {/* Animated Background */}
       <div style={{
         position: 'absolute',
         inset: 0,
         background: 'radial-gradient(circle at 20% 50%, rgba(108, 99, 255, 0.15), transparent 50%), radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.15), transparent 50%)',
       }} />
-      
+
       <motion.div
         initial={{ scale: 0.9, opacity: 0, y: 50 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -71,15 +80,21 @@ const AdminLogin = () => {
           }}>
             👨‍💻
           </div>
+
           <h1 style={{ fontSize: '1.75rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
             <span className="text-gradient">Admin Login</span>
           </h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>Access your dashboard</p>
+
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+            Access your dashboard
+          </p>
         </div>
-        
+
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Email Address</label>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
+              Email Address
+            </label>
             <input
               type="email"
               value={email}
@@ -97,9 +112,11 @@ const AdminLogin = () => {
               }}
             />
           </div>
-          
+
           <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>Password</label>
+            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
+              Password
+            </label>
             <input
               type="password"
               value={password}
@@ -117,7 +134,7 @@ const AdminLogin = () => {
               }}
             />
           </div>
-          
+
           <button
             type="submit"
             disabled={loading}
@@ -127,10 +144,6 @@ const AdminLogin = () => {
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
-        
-        <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-        
-        </div>
       </motion.div>
     </div>
   );
