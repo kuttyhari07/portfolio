@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import API from '../services/api';
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -12,6 +12,7 @@ const Dashboard = () => {
     testimonials: 0,
     averageRating: 0,
   });
+
   const [loading, setLoading] = useState(true);
   const [adminInfo, setAdminInfo] = useState(null);
   const [recentMessages, setRecentMessages] = useState([]);
@@ -20,43 +21,48 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('adminToken');
-        const headers = { Authorization: `Bearer ${token}` };
-        
-        const [
-          projects, skills, certificates, 
-          messages, testimonials, statsRes,
-          pendingRes
-        ] = await Promise.all([
-          axios.get('/api/projects', { headers }),
-          axios.get('/api/skills', { headers }),
-          axios.get('/api/certificates', { headers }),
-          axios.get('/api/contact', { headers }),
-          axios.get('/api/testimonials', { headers }),
-          axios.get('/api/testimonials/stats'),
-          axios.get('/api/testimonials', { headers }),
-        ]);
-        
-        setStats({
-          projects: projects.data.length,
-          skills: skills.data.length,
-          certificates: certificates.data.length,
-          messages: messages.data.length,
-          testimonials: testimonials.data.length,
-          averageRating: statsRes.data.averageRating,
-        });
-        
-        setRecentMessages(messages.data.slice(0, 3));
-        setPendingTestimonials(pendingRes.data.filter(t => t.status === 'pending').slice(0, 3));
-        
-        const admin = JSON.parse(localStorage.getItem('adminInfo'));
+        const admin = JSON.parse(localStorage.getItem('adminInfo') || '{}');
         setAdminInfo(admin);
+
+        const [
+          projects,
+          skills,
+          certificates,
+          messages,
+          testimonials,
+          statsRes,
+        ] = await Promise.all([
+          API.get('/projects'),
+          API.get('/skills'),
+          API.get('/certificates'),
+          API.get('/contact'),
+          API.get('/testimonials'),
+          API.get('/testimonials/stats'),
+        ]);
+
+        const testimonialData = Array.isArray(testimonials.data) ? testimonials.data : [];
+        const messageData = Array.isArray(messages.data) ? messages.data : [];
+
+        setStats({
+          projects: Array.isArray(projects.data) ? projects.data.length : 0,
+          skills: Array.isArray(skills.data) ? skills.data.length : 0,
+          certificates: Array.isArray(certificates.data) ? certificates.data.length : 0,
+          messages: messageData.length,
+          testimonials: testimonialData.length,
+          averageRating: statsRes.data?.averageRating || 0,
+        });
+
+        setRecentMessages(messageData.slice(0, 3));
+        setPendingTestimonials(
+          testimonialData.filter((t) => t.status === 'pending').slice(0, 3)
+        );
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Dashboard fetch error:', error.response?.data || error.message);
       } finally {
         setLoading(false);
       }
     };
+
     fetchData();
   }, []);
 
@@ -86,7 +92,6 @@ const Dashboard = () => {
 
   return (
     <div>
-      {/* Welcome Section */}
       <motion.div
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -114,7 +119,6 @@ const Dashboard = () => {
         </div>
       </motion.div>
 
-      {/* Stats Grid */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -156,13 +160,11 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* Main Content Grid */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: '1.5fr 1fr',
         gap: '1.5rem'
       }}>
-        {/* Recent Activity & Quick Actions */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <motion.div
             initial={{ y: 20, opacity: 0 }}
@@ -188,14 +190,6 @@ const Dashboard = () => {
                     textAlign: 'center',
                     transition: 'all 0.3s ease',
                     border: '1px solid transparent'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = action.color;
-                    e.currentTarget.style.background = `${action.color}15`;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'transparent';
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.03)';
                   }}
                 >
                   <div style={{ fontSize: '1.5rem' }}>{action.icon}</div>
@@ -225,7 +219,7 @@ const Dashboard = () => {
                   <div key={testimonial._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '0.5rem' }}>
                     <div>
                       <p style={{ fontWeight: 500 }}>{testimonial.name}</p>
-                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{testimonial.review.substring(0, 50)}...</p>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{testimonial.review?.substring(0, 50)}...</p>
                     </div>
                     <Link to="/admin/testimonials" style={{ fontSize: '0.75rem', color: 'var(--primary)', textDecoration: 'none' }}>
                       Review →
@@ -237,7 +231,6 @@ const Dashboard = () => {
           </motion.div>
         </div>
 
-        {/* Recent Messages */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -262,7 +255,7 @@ const Dashboard = () => {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <p style={{ fontWeight: 500 }}>{message.name}</p>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                      {new Date(message.createdAt).toLocaleDateString()}
+                      {message.createdAt ? new Date(message.createdAt).toLocaleDateString() : ''}
                     </span>
                   </div>
                   <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{message.subject}</p>
@@ -275,30 +268,6 @@ const Dashboard = () => {
           )}
         </motion.div>
       </div>
-
-      <style>{`
-        @media (max-width: 1024px) {
-          [style*="grid-template-columns: 1.5fr 1fr"] {
-            grid-template-columns: 1fr !important;
-          }
-        }
-        @media (max-width: 768px) {
-          [style*="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))"] {
-            grid-template-columns: 1fr 1fr !important;
-          }
-          .glass-card {
-            padding: 1rem !important;
-          }
-          h1 {
-            font-size: 1.5rem !important;
-          }
-        }
-        @media (max-width: 480px) {
-          [style*="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr))"] {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
     </div>
   );
 };
