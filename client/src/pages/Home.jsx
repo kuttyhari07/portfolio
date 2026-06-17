@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { TypeAnimation } from 'react-type-animation';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
 import Loader from '../components/Loader';
 import API from '../services/api';
+
 const Home = () => {
   const [homeData, setHomeData] = useState(null);
   const [socialLinks, setSocialLinks] = useState([]);
@@ -13,22 +13,23 @@ const Home = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-  try {
-    const [homeRes, socialRes, statsRes] = await Promise.all([
-      API.get('/home'),
-      API.get('/social'),
-      API.get('/testimonials/stats'),
-    ]);
+      try {
+        const [homeRes, socialRes, statsRes] = await Promise.all([
+          API.get('/home'),
+          API.get('/social'),
+          API.get('/testimonials/stats'),
+        ]);
 
-    setHomeData(homeRes.data);
-    setSocialLinks(socialRes.data);
-    setStats(statsRes.data);
-  } catch (error) {
-    console.error('Error fetching home data:', error);
-  } finally {
-    setLoading(false);
-  }
-};
+        setHomeData(homeRes.data);
+        setSocialLinks(socialRes.data);
+        setStats(statsRes.data);
+      } catch (error) {
+        console.error('Error fetching home data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchData();
   }, []);
 
@@ -45,62 +46,68 @@ const Home = () => {
 
   return (
     <div>
-      {/* Hero Section */}
-      <section style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        position: 'relative',
-        overflow: 'hidden',
-        paddingTop: '5rem'
-      }}>
-        {/* Animated Background Particles */}
-        <div style={{
-          position: 'absolute',
-          inset: 0,
-          background: `
-            radial-gradient(circle at 10% 30%, rgba(108, 99, 255, 0.15) 0%, transparent 50%),
-            radial-gradient(circle at 90% 70%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
-            radial-gradient(circle at 50% 50%, rgba(0, 212, 255, 0.05) 0%, transparent 70%)
-          `,
-        }} />
-        
-        {/* Floating Orbs */}
-        <div style={{
-          position: 'absolute',
-          top: '10%',
-          left: '5%',
-          width: '300px',
-          height: '300px',
-          background: 'radial-gradient(circle, rgba(108, 99, 255, 0.1), transparent 70%)',
-          borderRadius: '50%',
-          animation: 'float 8s ease-in-out infinite',
-        }} />
-        <div style={{
-          position: 'absolute',
-          bottom: '20%',
-          right: '5%',
-          width: '400px',
-          height: '400px',
-          background: 'radial-gradient(circle, rgba(168, 85, 247, 0.08), transparent 70%)',
-          borderRadius: '50%',
-          animation: 'float 10s ease-in-out infinite reverse',
-        }} />
+      <section
+        style={{
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          position: 'relative',
+          overflow: 'hidden',
+          paddingTop: '5rem',
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: `
+              radial-gradient(circle at 10% 30%, rgba(108, 99, 255, 0.15) 0%, transparent 50%),
+              radial-gradient(circle at 90% 70%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+              radial-gradient(circle at 50% 50%, rgba(0, 212, 255, 0.05) 0%, transparent 70%)
+            `,
+          }}
+        />
+
+        <div
+          style={{
+            position: 'absolute',
+            top: '10%',
+            left: '5%',
+            width: '300px',
+            height: '300px',
+            background: 'radial-gradient(circle, rgba(108, 99, 255, 0.1), transparent 70%)',
+            borderRadius: '50%',
+            animation: 'float 8s ease-in-out infinite',
+          }}
+        />
+
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '20%',
+            right: '5%',
+            width: '400px',
+            height: '400px',
+            background: 'radial-gradient(circle, rgba(168, 85, 247, 0.08), transparent 70%)',
+            borderRadius: '50%',
+            animation: 'float 10s ease-in-out infinite reverse',
+          }}
+        />
 
         <div className="container" style={{ position: 'relative', zIndex: 2 }}>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '4rem',
-            alignItems: 'center'
-          }}>
-            {/* Left Content */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '4rem',
+              alignItems: 'center',
+            }}
+          >
             <motion.div
               initial={{ x: -80, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.8, ease: 'easeOut' }}
             >
-              {/* Greeting Badge */}
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -113,45 +120,53 @@ const Home = () => {
                   background: 'rgba(108, 99, 255, 0.15)',
                   borderRadius: '2rem',
                   border: '1px solid rgba(108, 99, 255, 0.2)',
-                  marginBottom: '1.5rem'
+                  marginBottom: '1.5rem',
                 }}
               >
                 <span style={{ fontSize: '1.25rem' }}>👋</span>
-                <span style={{ color: 'var(--primary)', fontWeight: 500 }}>Welcome to my portfolio</span>
+                <span style={{ color: 'var(--primary)', fontWeight: 500 }}>
+                  Welcome to my portfolio
+                </span>
               </motion.div>
 
-              <h1 style={{
-                fontSize: '4rem',
-                fontWeight: 800,
-                lineHeight: 1.1,
-                marginBottom: '1rem'
-              }}>
+              <h1
+                style={{
+                  fontSize: '4rem',
+                  fontWeight: 800,
+                  lineHeight: 1.1,
+                  marginBottom: '1rem',
+                }}
+              >
                 Hi, I'm <br />
                 <span className="text-gradient" style={{ fontSize: '4.5rem' }}>
                   {homeData?.name || 'Hari Haran'}
                 </span>
               </h1>
 
-              <div style={{
-                fontSize: '1.5rem',
-                color: 'var(--text-secondary)',
-                marginBottom: '1.5rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem'
-              }}>
+              <div
+                style={{
+                  fontSize: '1.5rem',
+                  color: 'var(--text-secondary)',
+                  marginBottom: '1.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                }}
+              >
                 <span>I'm a</span>
                 <TypeAnimation
-                  sequence={homeData?.typingTexts?.flatMap(text => [text, 2000]) || [
-                    'IT Student 💻',
-                    2000,
-                    'Full Stack Developer 🚀',
-                    2000,
-                    'Problem Solver 🧩',
-                    2000,
-                    'Tech Enthusiast 🌟',
-                    2000,
-                  ]}
+                  sequence={
+                    homeData?.typingTexts?.flatMap((text) => [text, 2000]) || [
+                      'IT Student 💻',
+                      2000,
+                      'Full Stack Developer 🚀',
+                      2000,
+                      'Problem Solver 🧩',
+                      2000,
+                      'Tech Enthusiast 🌟',
+                      2000,
+                    ]
+                  }
                   wrapper="span"
                   speed={50}
                   repeat={Infinity}
@@ -159,30 +174,38 @@ const Home = () => {
                 />
               </div>
 
-              <p style={{
-                color: 'var(--text-secondary)',
-                fontSize: '1.125rem',
-                maxWidth: '500px',
-                lineHeight: 1.8,
-                marginBottom: '2rem'
-              }}>
-                {homeData?.introText || 'Passionate about building innovative solutions that make a difference.'}
+              <p
+                style={{
+                  color: 'var(--text-secondary)',
+                  fontSize: '1.125rem',
+                  maxWidth: '500px',
+                  lineHeight: 1.8,
+                  marginBottom: '2rem',
+                }}
+              >
+                {homeData?.introText ||
+                  'Passionate about building innovative solutions that make a difference.'}
               </p>
 
-              {/* Buttons */}
-              <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
-                {homeData?.resumeUrl && (
-                  <motion.a
-                    href={homeData.resumeUrl}
-                    download
-                    className="btn-primary"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
-                  >
-                    📄 Download Resume
-                  </motion.a>
-                )}
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '1rem',
+                  flexWrap: 'wrap',
+                  marginBottom: '2.5rem',
+                }}
+              >
+                <motion.a
+                  href="/resume.pdf"
+                  download="Hariharan_Resume.pdf"
+                  className="btn-primary"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+                >
+                  📄 Download Resume
+                </motion.a>
+
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Link to="/contact" className="btn-secondary">
                     💼 Hire Me
@@ -190,7 +213,6 @@ const Home = () => {
                 </motion.div>
               </div>
 
-              {/* Social Links */}
               <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '2.5rem' }}>
                 {socialLinks.map((link, index) => (
                   <motion.a
@@ -211,13 +233,13 @@ const Home = () => {
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontSize: '1.5rem',
-                      transition: 'all 0.3s ease'
+                      transition: 'all 0.3s ease',
                     }}
                     whileHover={{
                       y: -5,
                       background: 'var(--primary)',
                       borderColor: 'var(--primary)',
-                      boxShadow: 'var(--shadow-glow)'
+                      boxShadow: 'var(--shadow-glow)',
                     }}
                   >
                     {socialIcons[link.platform] || '🔗'}
@@ -225,7 +247,6 @@ const Home = () => {
                 ))}
               </div>
 
-              {/* Stats Cards */}
               <div style={{ display: 'flex', gap: '1.5rem' }}>
                 <motion.div
                   initial={{ y: 30, opacity: 0 }}
@@ -237,8 +258,11 @@ const Home = () => {
                   <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>
                     <span className="text-gradient">{stats.averageRating || 0}</span>
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>⭐ Average Rating</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                    ⭐ Average Rating
+                  </div>
                 </motion.div>
+
                 <motion.div
                   initial={{ y: 30, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -249,49 +273,55 @@ const Home = () => {
                   <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>
                     <span className="text-gradient">{stats.totalReviews || 0}</span>
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>📝 Total Reviews</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                    📝 Total Reviews
+                  </div>
                 </motion.div>
               </div>
             </motion.div>
 
-            {/* Right Content - Profile Image */}
             <motion.div
               initial={{ x: 80, opacity: 0, scale: 0.8 }}
               animate={{ x: 0, opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, ease: 'easeOut' }}
               style={{ display: 'flex', justifyContent: 'center', position: 'relative' }}
             >
-              {/* Glow Ring */}
-              <div style={{
-                position: 'absolute',
-                width: '450px',
-                height: '450px',
-                borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(108, 99, 255, 0.2), transparent 70%)',
-                animation: 'float 6s ease-in-out infinite',
-              }} />
-
-              <div style={{
-                position: 'relative',
-                width: '400px',
-                height: '400px',
-                borderRadius: '50%',
-                padding: '4px',
-                background: 'var(--gradient-1)',
-                animation: 'float 6s ease-in-out infinite',
-                boxShadow: 'var(--shadow-glow)'
-              }}>
-                <div style={{
-                  width: '100%',
-                  height: '100%',
+              <div
+                style={{
+                  position: 'absolute',
+                  width: '450px',
+                  height: '450px',
                   borderRadius: '50%',
-                  overflow: 'hidden',
-                  background: 'var(--bg-primary)'
-                }}>
+                  background: 'radial-gradient(circle, rgba(108, 99, 255, 0.2), transparent 70%)',
+                  animation: 'float 6s ease-in-out infinite',
+                }}
+              />
+
+              <div
+                style={{
+                  position: 'relative',
+                  width: '400px',
+                  height: '400px',
+                  borderRadius: '50%',
+                  padding: '4px',
+                  background: 'var(--gradient-1)',
+                  animation: 'float 6s ease-in-out infinite',
+                  boxShadow: 'var(--shadow-glow)',
+                }}
+              >
+                <div
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: '50%',
+                    overflow: 'hidden',
+                    background: 'var(--bg-primary)',
+                  }}
+                >
                   {homeData?.profilePhoto ? (
                     <img
                       src={homeData.profilePhoto}
-                      alt={homeData.name}
+                      alt={homeData.name || 'Profile'}
                       style={{
                         width: '100%',
                         height: '100%',
@@ -299,80 +329,26 @@ const Home = () => {
                       }}
                     />
                   ) : (
-                    <div style={{
-                      width: '100%',
-                      height: '100%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '6rem',
-                      fontWeight: 'bold',
-                      background: 'var(--gradient-1)',
-                      WebkitBackgroundClip: 'text',
-                      backgroundClip: 'text',
-                      color: 'transparent'
-                    }}>
+                    <div
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '6rem',
+                        fontWeight: 'bold',
+                        background: 'var(--gradient-1)',
+                        WebkitBackgroundClip: 'text',
+                        backgroundClip: 'text',
+                        color: 'transparent',
+                      }}
+                    >
                       HH
                     </div>
                   )}
                 </div>
               </div>
-
-              {/* Floating Tech Icons */}
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.8 }}
-                style={{
-                  position: 'absolute',
-                  top: '-20px',
-                  right: '-20px',
-                  background: 'var(--card-bg)',
-                  backdropFilter: 'blur(10px)',
-                  padding: '1rem',
-                  borderRadius: '1rem',
-                  border: '1px solid var(--border)',
-                  fontSize: '2rem'
-                }}
-              >
-                ⚛️
-              </motion.div>
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.9 }}
-                style={{
-                  position: 'absolute',
-                  bottom: '10px',
-                  left: '-30px',
-                  background: 'var(--card-bg)',
-                  backdropFilter: 'blur(10px)',
-                  padding: '1rem',
-                  borderRadius: '1rem',
-                  border: '1px solid var(--border)',
-                  fontSize: '2rem'
-                }}
-              >
-                🟢
-              </motion.div>
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 1 }}
-                style={{
-                  position: 'absolute',
-                  bottom: '40%',
-                  right: '-40px',
-                  background: 'var(--card-bg)',
-                  backdropFilter: 'blur(10px)',
-                  padding: '1rem',
-                  borderRadius: '1rem',
-                  border: '1px solid var(--border)',
-                  fontSize: '2rem'
-                }}
-              >
-                🚀
-              </motion.div>
             </motion.div>
           </div>
         </div>
@@ -398,9 +374,6 @@ const Home = () => {
             width: 320px !important;
             height: 320px !important;
           }
-          .floating-icons {
-            display: none !important;
-          }
         }
         @media (max-width: 768px) {
           h1 {
@@ -408,10 +381,6 @@ const Home = () => {
           }
           h1 span {
             font-size: 2.2rem !important;
-          }
-          .hero-stats {
-            flex-direction: column !important;
-            align-items: stretch !important;
           }
         }
         @keyframes float {
