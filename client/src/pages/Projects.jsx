@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../services/api';
 import Loader from '../components/Loader';
 import { motion } from 'framer-motion';
 
@@ -12,8 +12,9 @@ const Projects = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const res = await axios.get('/api/projects');
-        setProjects(res.data);
+        const res = await API.get('/projects');
+        const data = res.data?.data || res.data?.projects || res.data || [];
+        setProjects(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error fetching projects:', error);
       } finally {

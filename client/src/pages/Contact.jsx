@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
+import API from '../services/api';
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 
@@ -12,8 +12,9 @@ const Contact = () => {
   useEffect(() => {
     const fetchSocialLinks = async () => {
       try {
-        const res = await axios.get('/api/social');
-        setSocialLinks(res.data);
+        const res = await API.get('/social');
+        const data = res.data?.data || res.data?.socialLinks || res.data || [];
+        setSocialLinks(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error fetching social links:', error);
       }
@@ -24,7 +25,7 @@ const Contact = () => {
   const onSubmit = async (data) => {
     setSubmitting(true);
     try {
-      await axios.post('/api/contact', data);
+      await API.post('/contact', data);
       toast.success('Message sent successfully! 🎉');
       reset();
     } catch (error) {

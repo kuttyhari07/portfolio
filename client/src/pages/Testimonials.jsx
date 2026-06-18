@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
+import API from '../services/api';
 import toast from 'react-hot-toast';
 import Loader from '../components/Loader';
 import { motion } from 'framer-motion';
@@ -24,8 +24,9 @@ const Testimonials = () => {
 
   const fetchTestimonials = async () => {
     try {
-      const res = await axios.get('/api/testimonials/approved');
-      setTestimonials(res.data);
+      const res = await API.get('/testimonials/approved');
+      const data = res.data?.data || res.data?.testimonials || res.data || [];
+      setTestimonials(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Error fetching testimonials:', error);
     } finally {
@@ -36,7 +37,7 @@ const Testimonials = () => {
   const onSubmit = async (data) => {
     setSubmitting(true);
     try {
-      await axios.post('/api/testimonials', { ...data, rating });
+      await API.post('/testimonials', { ...data, rating });
       toast.success('Review submitted! Waiting for admin approval.');
       reset();
       setRating(5);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../services/api';
 import Loader from '../components/Loader';
 import { motion } from 'framer-motion';
 
@@ -10,8 +10,9 @@ const Skills = () => {
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        const res = await axios.get('/api/skills');
-        setSkills(res.data);
+        const res = await API.get('/skills');
+        const data = res.data?.data || res.data?.skills || res.data || [];
+        setSkills(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error fetching skills:', error);
       } finally {

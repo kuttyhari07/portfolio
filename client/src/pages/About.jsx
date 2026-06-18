@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import API from '../services/api';
 import Loader from '../components/Loader';
 import { motion } from 'framer-motion';
 
@@ -10,8 +10,8 @@ const About = () => {
   useEffect(() => {
     const fetchAbout = async () => {
       try {
-        const res = await axios.get('/api/about');
-        setAboutData(res.data);
+        const res = await API.get('/about');
+        setAboutData(res.data?.data || res.data || {});
       } catch (error) {
         console.error('Error fetching about data:', error);
       } finally {
